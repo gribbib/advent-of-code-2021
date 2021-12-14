@@ -6,7 +6,7 @@ namespace day2
     {
         static void Main(string[] args)
         {
-            int horizontal = 0, depth = 0;
+            int horizontal = 0, depth = 0, aim = 0;
             string[] lines = System.IO.File.ReadAllLines(@"input.txt");
 
             foreach (string line in lines)
@@ -15,10 +15,11 @@ namespace day2
                 var x = Convert.ToInt32(split[1]);
                 switch (split[0].ToLower()){
                     case "forward": horizontal += x;
+                        depth += aim * x;
                         break;
-                    case "down": depth += x;
+                    case "down": aim += x;
                         break;
-                    case "up": depth -= x;
+                    case "up": aim -= x;
                         break;
                 }
             }
