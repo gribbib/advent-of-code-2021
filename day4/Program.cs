@@ -36,6 +36,10 @@ namespace day4
                 b++;
             }
 
+            var firstFinalScore = 0;
+            var latestFinalScore = 0;
+            List<BoardNumber> latestWinningBoard = null;
+
             foreach(var input in inputNumbersString)
             {
                 var inputInt = Convert.ToInt32(input);
@@ -49,17 +53,26 @@ namespace day4
                             ColumnsCountMax = subList.GroupBy(v => v.Column, v=> v, (column, columns) => columns.Count()).Max()
                         });
 
-                int? winningBoardNumber = boards.FirstOrDefault(board => board.RowsCountMax == 5 || board.ColumnsCountMax == 5)?.Board;
+                var winningBoards = boards.Where(board => board.RowsCountMax == 5 || board.ColumnsCountMax == 5);
 
-                if (winningBoardNumber.HasValue)
+                if (winningBoards.Any())
                 {
-                    var winningBoardValueList = AllBoardsValuesList.Where(v => v.Board == winningBoardNumber);
-                    var unmarkedSum = winningBoardValueList.Where(v => !v.Marked).Sum(v => v.Value);
-                    var finalScore = unmarkedSum * inputInt;
-                    Console.WriteLine($"Final score: {finalScore}");
-                    break;
+                    foreach(var board in winningBoards){
+                        latestWinningBoard = AllBoardsValuesList.Where(v => v.Board == board.Board).ToList();
+                        var unmarkedSum = latestWinningBoard.Where(v => !v.Marked).Sum(v => v.Value);
+                        latestFinalScore = unmarkedSum * inputInt;
+
+                        if (firstFinalScore == 0){
+                            firstFinalScore = latestFinalScore;
+                        }
+
+                        latestWinningBoard.ForEach(v => AllBoardsValuesList.Remove(v));
+                    }
                 }
             }
+
+            Console.WriteLine($"First final score: {firstFinalScore}");
+            Console.WriteLine($"Latest final score: {latestFinalScore}");
 
             // Console.WriteLine(string.Join(Environment.NewLine + Environment.NewLine, AllBoardsValuesList.GroupBy(v => v.Board, v => v, (key, subList) => string.Join(Environment.NewLine, subList.GroupBy(v => v.Row, v=> v, (row, rows) => string.Join(" ", rows))))));
         }
