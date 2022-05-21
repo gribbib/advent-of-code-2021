@@ -18,7 +18,7 @@ namespace day5
                 var line = new Line(split[0], split[1]);
                 lines.Add(line);
 
-                if (line.Type <= 2){
+                if (line.Type <= 3){
                     foreach (var point in line.GetLinePoints())
                     {
                         if (coordinateSystem.ContainsKey(point)){
@@ -33,7 +33,13 @@ namespace day5
 
             int intersectionCount = coordinateSystem.Where(t => t.Value > 1).Count();
             Console.WriteLine($"Intersection Count: {intersectionCount}");
-            // Console.WriteLine(string.Join(" ", coordinateSystem));
+            Console.WriteLine(string.Join(" ", coordinateSystem.OrderBy(p => p.Key.Y).OrderBy(p => p.Key.X)));
+            Console.WriteLine(string
+                .Join(Environment.NewLine, coordinateSystem.OrderBy(p => p.Key.Y)
+                .GroupBy(v => v.Key.Y, v => v, (key, subList) => string
+                .Join(" ", subList.OrderBy(p => p.Key.X)))));
+                // .GroupBy(v => v.Row, v=> v, (row, rows) => string
+                // .Join(" ", rows))))));
         }
     }
 
@@ -78,6 +84,8 @@ namespace day5
                     return 1;
                 }else if(Start.Y == End.Y){
                     return 2;
+                }else if (Math.Abs(Start.Y - End.Y) == Math.Abs(Start.X - End.X)){
+                    return 3;
                 }
                 else {
                     return 99;
@@ -113,6 +121,15 @@ namespace day5
                     for (int x = start; x <= end; x++)
                     {
                         returnList.Add(new Point {X = x, Y = Start.Y});
+                    }
+                    break;
+                case 3:
+                    start = Math.Min(Start.X, End.X);
+                    end = Math.Min(Start.Y, End.Y);
+                    var diff = Math.Abs(Start.X - End.X);
+                    for (int i = 0; i <= diff; i++)
+                    {
+                        returnList.Add(new Point {X = start + i, Y = end + i});
                     }
                     break;
             }
